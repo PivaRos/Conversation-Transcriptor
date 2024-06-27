@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/pivaros/conversationssummarizer/src/voice"
+	"github.com/pivaros/Conversation-Transcriptor/src/voice"
 )
 
 func main() {
