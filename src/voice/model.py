@@ -1,32 +1,28 @@
+
+
 import sys
-import base64
-import tempfile
-import whisper
+import faster_whisper
 
 def main():
-    # Get the base64 encoded WAV file from the command line arguments
+    # Get the path to the WAV file from the command line arguments
     if len(sys.argv) != 2:
-        print("Usage: python transcribe.py <base64_wav>")
+        print("Usage: python transcribe.py <wav_file_path>")
         sys.exit(1)
     
-    base64_wav = sys.argv[1]
-    
-    # Decode the base64 encoded WAV file
-    audio_data = base64.b64decode(base64_wav)
-    
-    # Save the decoded audio to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_audio_file:
-        temp_audio_file.write(audio_data)
-        temp_audio_file_path = temp_audio_file.name
+    wav_file_path = sys.argv[1]
     
     # Load the Whisper model
-    model = whisper.load_model("medium")
-    
+    model = faster_whisper.WhisperModel("large-v2")
+
     # Transcribe the audio file to Hebrew text
-    result = model.transcribe(temp_audio_file_path, language="he")
+    segments, info = model.transcribe(wav_file_path, language="he")
+    
+    # Concatenate all the segments into a single transcription
+    transcription = " ".join(segment.text for segment in segments)
     
     # Print the transcribed text
-    print(result['text'])
+    print(transcription)
 
 if __name__ == "__main__":
     main()
+
