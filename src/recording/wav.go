@@ -2,6 +2,7 @@ package recording
 
 import (
 	"encoding/binary"
+	"fmt"
 	"os"
 )
 
@@ -17,7 +18,7 @@ func writeWavHeader(file *os.File, dataSize int, sampleRate, numChannels, bitsPe
 		subchunk2ID   = []byte("data")
 		chunkSize     = 36 + uint32(dataSize)
 	)
-
+	fmt.Println("saving headers")
 	if err := binary.Write(file, binary.LittleEndian, chunkID); err != nil {
 		return err
 	}
@@ -57,6 +58,6 @@ func writeWavHeader(file *os.File, dataSize int, sampleRate, numChannels, bitsPe
 	if err := binary.Write(file, binary.LittleEndian, uint32(dataSize)); err != nil {
 		return err
 	}
-
+	fmt.Println("finished saving headers")
 	return nil
 }

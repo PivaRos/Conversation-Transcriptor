@@ -76,12 +76,10 @@ func (r *Recorder) Start() error {
 
 func (r *Recorder) recordAudio() {
 	for r.recording {
-		r.mu.Lock()
 		err := r.stream.Read()
 		if err != nil {
 			fmt.Println("Error reading stream:", err)
 			r.recording = false
-			r.mu.Unlock()
 			break
 		}
 		for _, sample := range r.buffer {
@@ -92,7 +90,6 @@ func (r *Recorder) recordAudio() {
 			}
 		}
 		r.totalBytes += len(r.buffer) * 2 // Each int16 sample is 2 bytes
-		r.mu.Unlock()
 	}
 }
 
@@ -109,12 +106,17 @@ func (r *Recorder) Stop() (error, *os.File) {
 	}
 
 	fmt.Println("Recording finished.")
+	fmt.Println("trying to lock file")
 	r.mu.Lock()
-	defer r.mu.Unlock()
-
+	fmt.Println("locked file")
+	defer func() {
+		r.mu.Unlock()
+		fmt.Println("unlocked file")
+	}()
 	if _, err := r.file.Seek(0, 0); err != nil {
 		return err, nil
 	}
+	fmt.Println("done file seek")
 	if err := writeWavHeader(r.file, r.totalBytes, sampleRate, numChannels, bitsPerSample); err != nil {
 		return err, nil
 	}
