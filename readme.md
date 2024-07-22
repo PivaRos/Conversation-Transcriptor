@@ -23,21 +23,27 @@ cd Conversation-Transcriptor
 pip3 install torch
 pip3 install git+https://github.com/openai/whisper.git
 pip3 install soundfile
-pip3 install base64
 ```
 
-### add audio file
+### Dependencies
 
-add audio file with exact name "record_out.wav" to the textAudio folder
+#### BlackHole 2ch
+
+- you will have to install BlackHole 2ch and link all your wanted audio devices with it by "Audio MIDI Setup""
 
 ### Run
 
 ```sh
 cd ./src
-go run ./
+go run ./src
 
 ```
 
 #### the output of the Hebrew transcription should be printed to console
 
 ## done !
+
+## Todos
+
+- update readme
+- add Summarizer modal
