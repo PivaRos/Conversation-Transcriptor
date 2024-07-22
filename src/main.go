@@ -9,6 +9,7 @@ import (
 
 	"github.com/eiannone/keyboard"
 	"github.com/pivaros/Conversation-Transcriptor/src/recording"
+	"github.com/pivaros/Conversation-Transcriptor/src/voice"
 )
 
 func main() {
@@ -39,7 +40,7 @@ func main() {
 			case sig := <-sigChan:
 				fmt.Println("Received signal:", sig)
 				if recording {
-					if err := recorder.Stop(); err != nil {
+					if err, _ := recorder.Stop(); err != nil {
 						fmt.Println("Error stopping recording:", err)
 					}
 				}
@@ -52,7 +53,7 @@ func main() {
 
 				if key == keyboard.KeyEsc || char == 'q' {
 					if recording {
-						if err := recorder.Stop(); err != nil {
+						if err, _ := recorder.Stop(); err != nil {
 							fmt.Println("Error stopping recording:", err)
 						}
 					}
@@ -70,12 +71,14 @@ func main() {
 							recording = true
 						}
 					} else {
-						err := recorder.Stop()
+						err, file := recorder.Stop()
 						if err != nil {
 							fmt.Println("Error stopping recording:", err)
 						} else {
 							fmt.Println("Recording stopped...")
 							recording = false
+							//add logic for recording proccessing
+							go voice.RunModal(file)
 						}
 					}
 				}

@@ -96,16 +96,16 @@ func (r *Recorder) recordAudio() {
 	}
 }
 
-func (r *Recorder) Stop() error {
+func (r *Recorder) Stop() (error, *os.File) {
 	if !r.recording {
-		return fmt.Errorf("not recording")
+		return fmt.Errorf("not recording"), nil
 	}
 
 	r.recording = false
 
 	fmt.Println("Stopping recording...")
 	if err := r.stream.Stop(); err != nil {
-		return err
+		return err, nil
 	}
 
 	fmt.Println("Recording finished.")
@@ -113,14 +113,14 @@ func (r *Recorder) Stop() error {
 	defer r.mu.Unlock()
 
 	if _, err := r.file.Seek(0, 0); err != nil {
-		return err
+		return err, nil
 	}
 	if err := writeWavHeader(r.file, r.totalBytes, sampleRate, numChannels, bitsPerSample); err != nil {
-		return err
+		return err, nil
 	}
 	r.file.Close()
 	fmt.Println("file saved successfuly")
-	return nil
+	return nil, r.file
 }
 
 func (r *Recorder) Close() {
