@@ -42,7 +42,7 @@ func NewRecorder() (*Recorder, error) {
 	}, nil
 }
 
-func (r *Recorder) Start() error {
+func (r *Recorder) Start(baseFileName string) error {
 	if r.recording {
 		return fmt.Errorf("already recording")
 	}
@@ -51,8 +51,8 @@ func (r *Recorder) Start() error {
 	if err != nil {
 		return err
 	}
-	fileName := fmt.Sprintf("%s.wav", uuId)
-	file, err := os.Create(fileName)
+	wavFileName := fmt.Sprintf("%s_%s.wav", baseFileName, uuId)
+	file, err := os.Create(wavFileName)
 	if err != nil {
 		return err
 	}
@@ -121,7 +121,7 @@ func (r *Recorder) Stop() (error, *os.File) {
 		return err, nil
 	}
 	r.file.Close()
-	fmt.Println("file saved successfuly")
+	fmt.Println("file saved successfully")
 	return nil, r.file
 }
 

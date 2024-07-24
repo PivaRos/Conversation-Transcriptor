@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/eiannone/keyboard"
@@ -19,6 +21,11 @@ func main() {
 		return
 	}
 	defer recorder.Close()
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter output base file name: ")
+	baseFileName, _ := reader.ReadString('\n')
+	baseFileName = strings.TrimSpace(baseFileName) // Remove the newline character
 
 	if err := keyboard.Open(); err != nil {
 		log.Fatal(err)
@@ -63,7 +70,7 @@ func main() {
 
 				if char == 'r' {
 					if !recording {
-						err := recorder.Start()
+						err := recorder.Start(baseFileName)
 						if err != nil {
 							fmt.Println("Error starting recording:", err)
 						} else {
@@ -77,7 +84,7 @@ func main() {
 						} else {
 							fmt.Println("Recording stopped...")
 							recording = false
-							//add logic for recording proccessing
+							// Add logic for recording processing
 							go voice.RunModal(file)
 						}
 					}
